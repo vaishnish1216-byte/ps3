@@ -1,17 +1,30 @@
 # Hedge Fund Risk Modeling & Semi-Automated Trading System
 
 ## Team Information
-- **Team Name**: [Team Name]
-- **Year**: [Year]
-- **All-Female Team**: [Yes/No]
+- **Team Name**: [SigXCode]
+- **Year**: [3rd]
+- **All-Female Team**: [No]
 
 ## Architecture Overview
 
-#### Describe your approach here. Keep it short and clear.
+1. Data Ingestion and Preprocessing
 
-    - How does your system ingest and preprocess the varying data sources (market, macro, sentiment)?
-    - What risk modeling techniques were selected, and how are they integrated into the trading decision pipeline?
-    - How does your semi-automated strategy generate signals while respecting portfolio constraints and handling realistic conditions like slippage?
-    - How is the dashboard designed to provide explainable insights and key metrics (Sharpe, drawdown) to stakeholders?
+The system ingests financial information from three major categories: market data (OHLCV prices, order books, volatility indices), macroeconomic indicators (interest rates, CPI, GDP, treasury yields), and sentiment sources (financial news, Reddit, earnings transcripts, and social media). A modular ETL pipeline collects data through APIs and streaming services, storing raw datasets in structured databases and data lakes. Since these sources differ in frequency and format, preprocessing standardizes timestamps, removes missing or anomalous values, adjusts for corporate actions, and aligns datasets into a unified timeline. Feature engineering then transforms raw inputs into model-ready variables such as returns, rolling volatility, momentum, RSI, macro regime labels, and sentiment polarity scores. NLP models like FinBERT convert unstructured text into numerical sentiment signals with confidence scores. Finally, all engineered features are merged into a centralized feature store that feeds downstream analytics and trading models. This architecture ensures scalable, low-latency, and high-quality data processing while maintaining consistency across heterogeneous financial datasets, enabling accurate forecasting, efficient backtesting, and reliable real-time trading decisions under changing market conditions.
 
-**Note:** Please do not change the format or spelling of anything in this README. The fields are extracted using a script, so any changes to the structure or formatting may break the extraction process.
+---
+
+2. Risk Modeling and Integration
+
+The trading framework uses a multi-layered risk management architecture to ensure that profitability is balanced with capital preservation. Several quantitative techniques are integrated into the pipeline, including volatility modeling using EWMA and GARCH, Value at Risk (VaR) estimation, drawdown monitoring, and correlation-based exposure analysis. Volatility estimates dynamically control position sizing, ensuring that highly volatile assets receive smaller allocations. VaR models—historical, parametric, and Monte Carlo—estimate potential portfolio losses under normal and stressed market conditions. Drawdown controls continuously monitor equity decline from peak levels and can automatically reduce exposure or halt trading when thresholds are breached. Correlation matrices and sector exposure analysis prevent excessive concentration in related assets, reducing systemic risk. The architecture separates alpha generation from the risk engine, meaning every trading signal is validated against portfolio constraints before execution. If leverage, liquidity, or risk limits are violated, the trade is rejected or resized automatically. This integration creates a robust decision pipeline where risk management acts not as a post-process but as a core component of trade generation, ensuring stable long-term portfolio performance and resilience during volatile market regimes.
+
+---
+
+3. Semi-Automated Signal Generation and Constraints
+
+The semi-automated strategy combines quantitative models with human oversight to achieve both systematic consistency and adaptive decision-making. Trading signals are generated through an ensemble of technical, macroeconomic, and sentiment-driven factors. Technical indicators such as momentum, breakout strength, RSI, and volatility identify short-term opportunities, while macro regime models evaluate broader economic conditions like inflation trends and interest-rate cycles. Sentiment analysis from news and social platforms captures behavioral market shifts and event-driven anomalies. These independent signals are weighted together into a unified confidence score that determines trade direction and strength. Before execution, every signal passes through a portfolio constraint engine that enforces rules such as maximum position size, sector allocation caps, leverage limits, liquidity requirements, and turnover restrictions. Realistic execution modeling is also integrated into both backtesting and live simulation environments. Slippage models account for bid-ask spreads, market impact, and transaction costs, ensuring performance estimates remain practical rather than theoretical. The semi-automated layer additionally allows human intervention during abnormal market conditions, enabling traders to pause, modify, or override trades during black swan events or liquidity crises. This hybrid framework improves robustness, explainability, and real-world deployability.
+
+---
+
+4. Dashboard Design and Explainability
+
+The dashboard is designed to provide transparent, real-time, and explainable insights for both technical analysts and non-technical stakeholders. Built using modern visualization frameworks such as React, Plotly, and TradingView integrations, the interface presents portfolio activity, market exposure, and performance analytics in an intuitive manner. Core metrics include Sharpe Ratio, Sortino Ratio, maximum drawdown, Value at Risk (VaR), portfolio volatility, and cumulative returns, enabling stakeholders to evaluate both profitability and risk-adjusted efficiency. Interactive charts display equity curves, allocation heatmaps, and live performance trends, while drill-down components allow users to inspect individual trades and portfolio behavior. A dedicated explainability layer breaks down every trading decision into contributing factors such as momentum, macroeconomic influence, and sentiment strength, helping users understand why a position was entered or exited. Risk attribution modules further highlight concentration exposure, volatility contribution, and drawdown impact. The dashboard also compares backtested and live performance to detect model drift, slippage deviations, and execution inefficiencies over time. By combining analytics, visualization, and explainable AI principles, the platform transforms complex quantitative strategies into interpretable insights suitable for decision-makers, investors, and risk management teams.
